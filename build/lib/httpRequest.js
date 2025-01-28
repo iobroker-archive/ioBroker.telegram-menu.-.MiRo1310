@@ -18,6 +18,10 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
@@ -32,23 +36,25 @@ var import_telegram = require("./telegram");
 var import_path = __toESM(require("path"));
 var import_fs = __toESM(require("fs"));
 var import_logging = require("./logging");
+var import_global = require("./global");
 async function httpRequest(parts, userToSend, instanceTelegram, resize_keyboard, one_time_keyboard, userListWithChatID, directoryPicture) {
   if (!parts.httpRequest) {
     return;
   }
   for (const part of parts.httpRequest) {
     const url = part.url;
-    const user = part.user;
+    const userName = part.user;
     const password = part.password;
     const method = "get";
+    (0, import_logging.debug)([{ text: "URL:", val: url }]);
     try {
       const response = await (0, import_axios.default)(
-        user && password ? {
+        userName && password ? {
           method,
           url,
           responseType: "arraybuffer",
           auth: {
-            username: user,
+            username: userName,
             password
           }
         } : {
@@ -60,10 +66,22 @@ async function httpRequest(parts, userToSend, instanceTelegram, resize_keyboard,
       if (!part.filename) {
         return;
       }
+      if (!(0, import_global.checkDirectoryIsOk)(directoryPicture)) {
+        return;
+      }
       const imagePath = import_path.default.join(directoryPicture, part.filename);
       import_fs.default.writeFileSync(imagePath, Buffer.from(response.data), "binary");
       (0, import_logging.debug)([{ text: "Pic saved:", val: imagePath }]);
-      (0, import_telegram.sendToTelegram)(user, imagePath, [], instanceTelegram, resize_keyboard, one_time_keyboard, userListWithChatID, "");
+      await (0, import_telegram.sendToTelegram)(
+        userToSend,
+        imagePath,
+        [],
+        instanceTelegram,
+        resize_keyboard,
+        one_time_keyboard,
+        userListWithChatID,
+        "false"
+      );
     } catch (e) {
       (0, import_logging.error)([
         { text: "Error:", val: e.message },

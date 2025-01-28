@@ -18,6 +18,10 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
@@ -32,6 +36,7 @@ module.exports = __toCommonJS(telegram_exports);
 var import_logging = require("./logging");
 var import_utilities = require("./utilities");
 var import_main = __toESM(require("../main"));
+var import_global = require("./global");
 async function sendToTelegram(user = "", textToSend, keyboard = [], instance = "telegram.0", resize_keyboard = true, one_time_keyboard = true, userListWithChatID, parse_mode) {
   try {
     const _this = import_main.default.getInstance();
@@ -47,6 +52,7 @@ async function sendToTelegram(user = "", textToSend, keyboard = [], instance = "
     ]);
     textToSend = (0, import_utilities.newLine)(textToSend);
     if (keyboard.length == 0) {
+      _this.log.debug("No Keyboard");
       _this.sendTo(
         instance,
         "send",
@@ -56,7 +62,7 @@ async function sendToTelegram(user = "", textToSend, keyboard = [], instance = "
           parse_mode: parse_modeType
         },
         function(res) {
-          _this.log.debug("Sent Value to " + JSON.stringify(res) + " users!");
+          _this.log.debug(`Sent Value to ${JSON.stringify(res)} users!`);
         }
       );
     } else {
@@ -134,7 +140,7 @@ const sendLocationToTelegram = async (user, data, instance, userListWithChatID) 
   }
 };
 function getParseMode(val) {
-  if (val === "true" || val === true) {
+  if ((0, import_global.isTruthy)(val)) {
     return "HTML";
   }
   return "Markdown";

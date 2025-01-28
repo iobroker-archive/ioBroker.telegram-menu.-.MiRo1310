@@ -18,6 +18,10 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
@@ -30,6 +34,7 @@ module.exports = __toCommonJS(echarts_exports);
 var import_main = __toESM(require("../main"));
 var import_logging = require("./logging");
 var import_telegram = require("./telegram");
+var import_global = require("./global");
 function getChart(echarts, directoryPicture, user, instanceTelegram, userListWithChatID, resize_keyboard, one_time_keyboard) {
   const _this = import_main.default.getInstance();
   try {
@@ -37,10 +42,13 @@ function getChart(echarts, directoryPicture, user, instanceTelegram, userListWit
       return;
     }
     for (const echart of echarts) {
-      const splitted = echart.preset.split(".");
-      const echartInstance = splitted[0] + "." + splitted[1];
+      const splitPreset = echart.preset.split(".");
+      const instanceOfEchart = `${splitPreset[0]}.${splitPreset[1]}`;
+      if (!(0, import_global.checkDirectoryIsOk)(directoryPicture)) {
+        return;
+      }
       _this.sendTo(
-        echartInstance,
+        instanceOfEchart,
         {
           preset: echart.preset,
           renderer: "jpg",
@@ -58,8 +66,13 @@ function getChart(echarts, directoryPicture, user, instanceTelegram, userListWit
             resize_keyboard,
             one_time_keyboard,
             userListWithChatID,
-            ""
-          );
+            "false"
+          ).catch((e) => {
+            (0, import_logging.error)([
+              { text: "Error", val: e.message },
+              { text: "Stack", val: e.stack }
+            ]);
+          });
         }
       );
     }

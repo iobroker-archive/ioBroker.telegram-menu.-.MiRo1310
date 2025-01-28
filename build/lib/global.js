@@ -18,23 +18,28 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var global_exports = {};
 __export(global_exports, {
+  checkDirectoryIsOk: () => checkDirectoryIsOk,
   decomposeText: () => decomposeText,
+  deepCopy: () => deepCopy,
   deleteDoubleEntriesInArray: () => deleteDoubleEntriesInArray,
+  isDefined: () => isDefined,
+  isFalsy: () => isFalsy,
   isJSON: () => isJSON,
+  isString: () => isString,
+  isTruthy: () => isTruthy,
   replaceAll: () => replaceAll
 });
 module.exports = __toCommonJS(global_exports);
-function deleteDoubleEntriesInArray(arr) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
-}
-function replaceAll(text, searchValue, replaceValue) {
-  return text.replace(new RegExp(searchValue, "g"), replaceValue);
-}
+var import_logging = require("./logging");
+const isDefined = (value) => value !== void 0 && value !== null;
+const deleteDoubleEntriesInArray = (arr) => arr.filter((item, index) => arr.indexOf(item) === index);
+const replaceAll = (text, searchValue, replaceValue) => text.replace(new RegExp(searchValue, "g"), replaceValue);
 function isJSON(_string) {
   try {
     JSON.parse(_string);
     return true;
-  } catch (error) {
+  } catch (error2) {
+    console.error([{ text: "Error:", val: error2 }]);
     return false;
   }
 }
@@ -50,11 +55,39 @@ function decomposeText(text, searchValue, secondValue) {
     textWithoutSubstring
   };
 }
+const deepCopy = (obj) => {
+  try {
+    return JSON.parse(JSON.stringify(obj));
+  } catch (err) {
+    console.error(`Error deepCopy: ${JSON.stringify(err)}`);
+  }
+};
+const isString = (value) => typeof value === "string";
+const isTruthy = (value) => ["1", 1, true, "true"].includes(value);
+const isFalsy = (value) => ["0", 0, false, "false", void 0, null].includes(value);
+function checkDirectoryIsOk(directory) {
+  if (["", null, void 0].includes(directory)) {
+    (0, import_logging.error)([
+      {
+        text: "Error:",
+        val: "No directory to save the picture. Please add a directory in the settings with full read and write permissions."
+      }
+    ]);
+    return false;
+  }
+  return true;
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  checkDirectoryIsOk,
   decomposeText,
+  deepCopy,
   deleteDoubleEntriesInArray,
+  isDefined,
+  isFalsy,
   isJSON,
+  isString,
+  isTruthy,
   replaceAll
 });
 //# sourceMappingURL=global.js.map

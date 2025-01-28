@@ -1,79 +1,79 @@
 /* Table */
 
 #root table {
-	border-collapse: collapse !important;
-	width: 100% !important;
+    border-collapse: collapse !important;
+    width: calc(100%) !important;
+    overflow-y: auto;
+    flex: 1;
 }
+
+table input {
+    border: none !important;
+}
+
+tbody tr {
+    position: relative;
+}
+
+.table__ghost_id {
+    position: absolute;
+    top: -40px;
+
+}
+
 #root tr th {
-	background-color: #3399cc;
-	padding: 5px 5px 2px 5px;
-	top: 0;
+    background-color: var(--table-head);
+    padding: 0.5rem 0.5rem 0.2rem 0.5rem;
+    top: 0;
+}
+
+tr td:has(button.buttonTrue),
+tr td:has(button.buttonFalse) {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 20px !important;
 }
 
 #root table .table__head_checkbox {
-	width: 25px;
+    width: 25px;
 }
 
 .table__head_button {
-	width: 1rem;
+    width: 1rem;
 }
-table input {
-	border: none !important;
-}
-
-table {
-	overflow-y: auto;
-	flex: 1;
-}
-
 
 tr[draggable="true"] {
-	cursor: grab;
-	padding-right: 10px !important;
-	margin-right: 10px;
+    cursor: grab;
+    padding-right: 10px !important;
+    margin-right: 10px;
 }
 
 tr[draggable="true"]:hover {
-	background-color: rgba(51, 153, 204, 0.5) !important;
+    background-color: var(--table-hover) !important;
 }
 
 tr[draggable="true"] span i {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 tr td {
-	padding: 0 5px !important;
-	font-size: 0.8rem !important;
-	border-bottom: none !important;
+    padding: 0 5px !important;
+    font-size: 1rem !important;
 }
 
 tr td td,
 #root table input {
-	background-color: transparent !important;
+    background-color: transparent !important;
 }
 
-.light tr:not(.SubTable):nth-child(even),
-.colored tr:not(.SubTable):nth-child(even) {
-	background-color: #eee;
+tr:not(.SubTable):nth-child(even) {
+    background-color: var(--table-row-even);
 }
-.dark tr:not(.SubTable):nth-child(even) {
-	background-color: #333;
+
+tr:not(.SubTable):nth-child(odd) {
+    background-color: var(--table-row-odd);
 }
-.light tr:not(.SubTable):nth-child(odd),
-.colored tr:not(.SubTable):nth-child(odd) {
-	background-color: #fff;
-}
-.dark tr:not(.SubTable):nth-child(odd) {
-	background-color: #555;
-}
-.blue tr:not(.SubTable):nth-child(odd) {
-	background-color: rgb(62, 68, 72);
-}
-.dark .MenuNavigation-Container table tbody tr:first-child td,
-.blue .MenuNavigation-Container table tbody tr:first-child td {
-	color: black !important;
-}
-.dark th,
-.blue th {
-	color: black;
+
+.row__navigate_to-active {
+    border: 3px solid var(--destructive);
 }
